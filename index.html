@@ -69,16 +69,16 @@
     <form id="calculatorForm" onsubmit="event.preventDefault(); calculateProfit();">
         <h1>Ice Blasting Profit Calculator</h1>
         <label for="iceblasterCost">Price for Iceblaster ($):</label>
-        <input type="number" id="iceblasterCost" required min="0" step="0.01">
+        <input type="number" id="iceblasterCost" required value="17000" min="0" step="0.01">
         <input type="number" id="iceblasterMaintenance" class="percentage-field" value="10" min="0" step="0.01" title="Yearly Maintenance %">
 
         <label for="dryIcePrice">Price for 1 kg of Dry Ice ($):</label>
-        <input type="number" id="dryIcePrice" required min="0" step="0.01">
+        <input type="number" id="dryIcePrice" required value="2.9" min="0" step="0.01">
         <label for="iceConsumption">Iceblaster Consumption (kg/hour):</label>
-        <input type="number" id="iceConsumption" required min="0" step="0.01">
+        <input type="number" id="iceConsumption" required value="15" min="0" step="0.01">
 
         <label for="compressorCost">Price for Compressor ($):</label>
-        <input type="number" id="compressorCost" required min="0" step="0.01">
+        <input type="number" id="compressorCost" required value="10000" min="0" step="0.01">
         <input type="number" id="compressorMaintenance" class="percentage-field" value="10" min="0" step="0.01" title="Yearly Maintenance %">
 
         <label for="fuelPrice">Fuel Price ($/liter):</label>
@@ -87,14 +87,14 @@
         <input type="number" id="fuelConsumption" value="8" required min="0" step="0.01">
 
         <label for="amortizationMonths">Number of Months for Amortization:</label>
-        <input type="number" id="amortizationMonths" required min="1" step="1">
+        <input type="number" id="amortizationMonths" value="36" required min="1" step="1">
 
-        <label for="salary">Monthly Salary ($):</label>
-        <input type="number" id="salary" required min="0" step="0.01">
+        <label for="salary">Monthly Salaries with taxes ($):</label>
+        <input type="number" id="salary" value="1500" required min="0" step="0.01">
 
         <label for="workHours">Daily and Monthly Working Hours:</label>
-        <input type="number" id="workHours" placeholder="Daily Hours" step="0.01" min="0" required>
-        <input type="number" id="monthlyWorkHours" placeholder="Monthly Hours" step="0.01" min="0" required>
+        <input type="number" id="workHours" placeholder="Daily Hours" value="1" step="0.01" min="0" required>
+        <input type="number" id="monthlyWorkHours" placeholder="Monthly Hours" value="22" step="0.01" min="0" required>
 
         <button type="submit">Calculate Hourly Price</button>
         <div id="result" class="result"></div>
