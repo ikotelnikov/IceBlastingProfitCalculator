@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ice Blasting Profit Calculator</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            display: flex;
+            flex-direction: row;
+            max-width: 1200px;
+        }
+        form {
+            flex: 1;
+            margin-right: 20px;
+        }
+        #chartContainer {
+            flex: 1;
+            max-width: 400px;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
+        input[type="number"] {
+            width: calc(50% - 10px);
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        .percentage-field {
+            width: 50px;
+            margin-left: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #ecf0f1;
+            border-radius: 4px;
+        }
+        canvas {
+            max-width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <form id="calculatorForm" onsubmit="event.preventDefault(); calculateProfit();">
+        <h1>Ice Blasting Profit Calculator</h1>
+        <label for="iceblasterCost">Price for Iceblaster ($):</label>
+        <input type="number" id="iceblasterCost" required min="0" step="0.01">
+        <input type="number" id="iceblasterMaintenance" class="percentage-field" value="10" min="0" step="0.01" title="Yearly Maintenance %">
+
+        <label for="compressorCost">Price for Compressor ($):</label>
+        <input type="number" id="compressorCost" required min="0" step="0.01">
+        <input type="number" id="compressorMaintenance" class="percentage-field" value="10" min="0" step="0.01" title="Yearly Maintenance %">
+
+        <label for="amortizationMonths">Number of Months for Amortization:</label>
+        <input type="number" id="amortizationMonths" required min="1" step="1">
+
+        <label for="salary">Monthly Salary ($):</label>
+        <input type="number" id="salary" required min="0" step="0.01">
+
+        <label for="workHours">Daily and Monthly Working Hours:</label>
+        <input type="number" id="workHours" placeholder="Daily Hours" step="0.01" min="0" required>
+        <input type="number" id="monthlyWorkHours" placeholder="Monthly Hours" step="0.01" min="0" required>
+
+        <label for="dryIcePrice">Price for 1 kg of Dry Ice ($):</label>
+        <input type="number" id="dryIcePrice" required min="0" step="0.01">
+
+        <label for="iceConsumption">Iceblaster Consumption (kg/hour):</label>
+        <input type="number" id="iceConsumption" required min="0" step="0.01">
+
+        <label for="fuelPrice">Fuel Price ($/liter):</label>
+        <input type="number" id="fuelPrice" value="1.4" required min="0" step="0.01">
+
+        <label for="fuelConsumption">Fuel Consumption (liters/hour):</label>
+        <input type="number" id="fuelConsumption" value="8" required min="0" step="0.01">
+
+        <button type="submit">Calculate Hourly Price</button>
+        <div id="result" class="result"></div>
+    </form>
+
+    <div id="chartContainer">
+        <h2>Cost Breakdown</h2>
+        <canvas id="costChart"></canvas>
+    </div>
+
+    <script>
+        const workHoursField = document.getElementById('workHours');
+        const monthlyWorkHoursField = document.getElementById('monthlyWorkHours');
+        const resultField = document.getElementById('result');
+        const DAYS_IN_MONTH = 22; // Assumed working days in a month
+        let costChart;
+
+        workHoursField.addEventListener('input', () => {
+            const dailyHours = parseFloat(workHoursField.value);
+            if (!isNaN(dailyHours)) {
+                monthlyWorkHoursField.value = (dailyHours * DAYS_IN_MONTH).toFixed(2);
+            }
+        });
+
+        monthlyWorkHoursField.addEventListener('input', () => {
+            const monthlyHours = parseFloat(monthlyWorkHoursField.value);
+            if (!isNaN(monthlyHours)) {
+                workHoursField.value = (monthlyHours / DAYS_IN_MONTH).toFixed(2);
+            }
+        });
+
+        function calculateProfit() {
+            const iceblasterCost = parseFloat(document.getElementById('iceblasterCost').value);
+            const iceblasterMaintenance = parseFloat(document.getElementById('iceblasterMaintenance').value) / 100;
+            const compressorCost = parseFloat(document.getElementById('compressorCost').value);
+            const compressorMaintenance = parseFloat(document.getElementById('compressorMaintenance').value) / 100;
+            const amortizationMonths = parseInt(document.getElementById('amortizationMonths').value, 10);
+            const salary = parseFloat(document.getElementById('salary').value);
+            const dryIcePrice = parseFloat(document.getElementById('dryIcePrice').value);
+            const iceConsumption = parseFloat(document.getElementById('iceConsumption').value);
+            const fuelPrice = parseFloat(document.getElementById('fuelPrice').value);
+            const fuelConsumption = parseFloat(document.getElementById('fuelConsumption').value);
+            const monthlyWorkHours = parseFloat(monthlyWorkHoursField.value);
+
+            if (isNaN(iceblasterCost) || isNaN(iceblasterMaintenance) || isNaN(compressorCost) ||
+                isNaN(compressorMaintenance) || isNaN(amortizationMonths) || isNaN(salary) ||
+                isNaN(dryIcePrice) || isNaN(iceConsumption) || isNaN(fuelPrice) ||
+                isNaN(fuelConsumption) || isNaN(monthlyWorkHours) || monthlyWorkHours <= 0) {
+                alert("Please fill in all fields correctly.");
+                return;
+            }
+
+            const monthlyAmortization = (iceblasterCost + compressorCost) / amortizationMonths;
+            const monthlyMaintenanceCost = (iceblasterCost * iceblasterMaintenance + compressorCost * compressorMaintenance) / 12;
+            const dryIceCostPerHour = dryIcePrice * iceConsumption;
+            const dryIceCostPerMonth = dryIceCostPerHour * monthlyWorkHours;
+            const fuelCostPerHour = fuelPrice * fuelConsumption;
+            const fuelCostPerMonth = fuelCostPerHour * monthlyWorkHours;
+            const totalMonthlyCost = monthlyAmortization + monthlyMaintenanceCost + salary + dryIceCostPerMonth + fuelCostPerMonth;
+
+            const hourlyPrice = (totalMonthlyCost / monthlyWorkHours).toFixed(2);
+            resultField.textContent = `Hourly price to break even: $${hourlyPrice}`;
+
+            const costs = {
+                "Amortization": monthlyAmortization,
+                "Maintenance": monthlyMaintenanceCost,
+                "Salary": salary,
+                "Dry Ice": dryIceCostPerMonth,
+                "Fuel": fuelCostPerMonth
+            };
+
+            updateChart(costs);
+        }
+
+        function updateChart(costs) {
+            const labels = Object.keys(costs);
+            const data = Object.values(costs);
+
+            if (costChart) {
+                costChart.destroy();
+            }
+
+            const ctx = document.getElementById('costChart').getContext('2d');
+            costChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels,
+                    datasets: [{
+                        data,
+                        backgroundColor: ['#3498db', '#e74c3c', '#2ecc71', '#f1c40f', '#9b59b6'],
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
