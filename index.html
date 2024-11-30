@@ -68,20 +68,20 @@
 <body>
     <form id="calculatorForm" onsubmit="event.preventDefault(); calculateProfit();">
         <h1>Ice Blasting Profit Calculator</h1>
-        <label for="iceblasterCost">Price for Iceblaster ($):</label>
+        <label for="iceblasterCost">Price for Iceblaster (€):</label>
         <input type="number" id="iceblasterCost" required value="17000" min="0" step="0.01">
         <input type="number" id="iceblasterMaintenance" class="percentage-field" value="10" min="0" step="0.01" title="Yearly Maintenance %">
 
-        <label for="dryIcePrice">Price for 1 kg of Dry Ice ($):</label>
+        <label for="dryIcePrice">Price for 1 kg of Dry Ice (€):</label>
         <input type="number" id="dryIcePrice" required value="2.9" min="0" step="0.01">
         <label for="iceConsumption">Iceblaster Consumption (kg/hour):</label>
         <input type="number" id="iceConsumption" required value="15" min="0" step="0.01">
 
-        <label for="compressorCost">Price for Compressor ($):</label>
+        <label for="compressorCost">Price for Compressor (€):</label>
         <input type="number" id="compressorCost" required value="10000" min="0" step="0.01">
         <input type="number" id="compressorMaintenance" class="percentage-field" value="10" min="0" step="0.01" title="Yearly Maintenance %">
 
-        <label for="fuelPrice">Fuel Price ($/liter):</label>
+        <label for="fuelPrice">Fuel Price (€/liter):</label>
         <input type="number" id="fuelPrice" value="1.4" required min="0" step="0.01">
         <label for="fuelConsumption">Fuel Consumption (liters/hour):</label>
         <input type="number" id="fuelConsumption" value="8" required min="0" step="0.01">
@@ -89,7 +89,7 @@
         <label for="amortizationMonths">Number of Months for Amortization:</label>
         <input type="number" id="amortizationMonths" value="36" required min="1" step="1">
 
-        <label for="salary">Monthly Salaries with taxes ($):</label>
+        <label for="salary">Monthly Salaries with taxes (€):</label>
         <input type="number" id="salary" value="1500" required min="0" step="0.01">
 
         <label for="workHours">Daily and Monthly Working Hours:</label>
